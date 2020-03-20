@@ -1,4 +1,8 @@
 # COVID-19-MV
+
+[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/lgfunderburk/COVID-19-MV/master)
+
+
 Repository to visualize and model COVID-19 data for Callysto. 
 
 Author: Laura Gutierrez Funderburk
