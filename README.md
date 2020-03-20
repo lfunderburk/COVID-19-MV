@@ -1,6 +1,6 @@
 # COVID-19-MV
 
-[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/lgfunderburk/COVID-19-MV/master)
+[![Callysto](https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.facebook.com%2Fcallystocanada%2F&psig=AOvVaw0pypKJ3L453e7evZc8yaOs&ust=1584768671160000&source=images&cd=vfe&ved=0CAIQjRxqFwoTCJCir8CpqOgCFQAAAAAdAAAAABAD)](https://hub.callysto.ca/jupyter/hub/user-redirect/git-pull?repo=https://github.com/lgfunderburk/COVID-19-MV&branch=master&urlpath=notebooks/COVID-19-MV/COVID-19-Vis/DataVisCOVID-19.ipynb&depth=1)
 
 
 Repository to visualize and model COVID-19 data for Callysto. 
