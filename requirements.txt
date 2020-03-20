@@ -1,0 +1,5 @@
+pandas
+matplotlib
+widgets
+numpy
+git
