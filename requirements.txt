@@ -3,3 +3,6 @@ matplotlib
 widgets
 numpy
 git
+GitPython
+world_bank_data
+ipycombobox
