@@ -1,6 +1,6 @@
 # COVID-19-MV
 
-[Try Online Here in the Callysto Hub](https://hub.callysto.ca/jupyter/hub/user-redirect/git-pull?repo=https://github.com/lgfunderburk/COVID-19-MV&branch=master&urlpath=notebooks/COVID-19-MV/COVID-19-Vis/DataVisCOVID-19.ipynb&depth=1)
+[Try Online Here in the Callysto Hub](https://bit.ly/3agEyQr)
 
 ![COVID](COVID-19-World.gif)
 
