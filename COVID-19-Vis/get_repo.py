@@ -1,6 +1,6 @@
 # Author: Laura Gutierrez Funderburk
 # Creaed on March 2 2020
-# Last Updated on March 19 2020
+# Last Updated on March 23 2020
 
 """
 This script pulls and updates repository 
@@ -12,6 +12,12 @@ but can be modified to pull and update other repositories
 The script also contains a few functions and widgets used in conjunction with DataVisCOVID-19 Jupyter Notebook
 
 """
+
+#!pip install ipycombobox
+#!jupyter nbextension enable --py [--sys-prefix|--user|--system] ipycombobox
+# https://github.com/vidartf/ipycombobox
+
+#pip install pycountry_convert
 
 import pandas as pd
 import requests as r
@@ -26,6 +32,21 @@ register_matplotlib_converters()
 from ipywidgets import widgets, VBox, HBox, Button
 from ipywidgets import Button, Layout, widgets
 from IPython.display import display, Javascript, Markdown, HTML
+from ipycombobox import Combobox
+
+import pandas as pd
+import plotly
+import plotly.offline as offline
+import world_bank_data as wb
+import plotly.graph_objects as go
+
+
+def version_to_int_list(version):
+    return [int(s) for s in version.split('.')]
+
+
+assert version_to_int_list(plotly.__version__) >= version_to_int_list('3.8.0'), 'Sunburst plots require Plotly >= 3.8.0'
+
 
     
 def run_4cell( b ):
@@ -75,9 +96,9 @@ if __name__ == "__main__":
             # create list of commits then print some of them to stdout
             commits = list(repo.iter_commits('master'))[:COMMITS_TO_PRINT]
             # Optional - uncomment if you want to see who and what was committed
-    #         for commit in commits:
-    #             print_commit(commit)
-    #             pass
+#             for commit in commits:
+#                 print_commit(commit)
+#                 pass
         else:
             print('Could not load repository at {} :('.format(repo_path))
     except:
@@ -112,6 +133,10 @@ if __name__ == "__main__":
 
         # remove coordinates
         sorted_df = sorted_df.iloc[:,0:6]
+        
+        sorted_df = sorted_df[pd.notnull(sorted_df['Last Update'])]
+        
+        sorted_df = sorted_df.replace({"US": "United States", "Taiwan*": "Taiwan","UK":"United Kingdom"})
 
         # Rename NaN columns
         values = {'Province/State': "No Name", 'Confirmed': 0, 'Deaths': 0, 'Recovered': 0}
@@ -134,12 +159,19 @@ if __name__ == "__main__":
         print("WARNING: check that 'Last Update' is still a column with dates and times in it. \nThe same applies for 'Country/Region' and 'Province/State' columns.")
 
     # UI 
-    all_the_widgets = [widgets.Dropdown(
-                    value = countries_regions[0],
-                    options = countries_regions, 
-                    description ='Country/Region:', 
-                    style = style, 
-                    disabled=False)]
+    
+    countries_regions = countries_regions.tolist()
+    all_the_widgets = [widgets.Combobox(
+        # value='John',
+        placeholder='Choose country',
+        options = countries_regions, 
+        description ='Country/Region:',
+        ensure_option=True,
+        style=style,
+        disabled=False
+    )]
+    
+
     # UI
     CD_button = widgets.Button(
         button_style='success',
@@ -163,3 +195,95 @@ if __name__ == "__main__":
     # Connect widget to function - run subsequent cells
     PR_button.on_click( run_4cell )
     
+    ########################### 
+    # SUNBURST PLOT
+    # To get continents 
+    import pycountry_convert as pc
+
+    # Get earliest date
+    least_recent_date = sorted_df['Last Update'].min()
+    # Get latest date
+    recent_date = sorted_df['Last Update'].max()
+
+    # Get data for the latest date
+    last_date = pd.Timestamp(recent_date.date())
+    latest = sorted_df[sorted_df["Last Update"]>=last_date]
+
+    # Create new dataframe
+    confirmed = []
+    death = []
+    removed = []
+    continent_cd = []
+    country_cd = []
+    good_country = []
+    
+    # Iterate over each country
+    for item in countries_regions:
+        try:
+
+            # Transform country name into code
+            country_code = pc.country_name_to_country_alpha2(item, cn_name_format="default")
+            # Assign to appropriate continent
+            continent_name = pc.country_alpha2_to_continent_code(country_code)
+
+            # Start appending once we have both country and continent codes
+            country_cd.append(country_code)
+            continent_cd.append(continent_name)
+            good_country.append(item)
+
+            # Data on confirmed
+            country_conf = latest[latest["Country/Region"]==item]["Confirmed"].sum()
+            confirmed.append(country_conf)
+
+            # Data on deaths
+            country_deat = latest[latest["Country/Region"]==item]["Deaths"].sum()
+            death.append(country_deat)
+
+            # Data on recovered
+            country_reco = latest[latest["Country/Region"]==item]["Recovered"].sum()
+            removed.append(country_reco)
+
+
+        except:
+            # Data is dirty - some of these entries are not recognized by country_name_to_country_alpha2
+            # or by country_alpha2_to_continent_code
+            continue
+    
+    # Build dataframe
+    sums_per_country = pd.DataFrame({"Country":good_country,"ContinentCode":continent_cd,\
+                "Confirmed":confirmed,"Deaths":death,"Recovered":removed})  
+
+    # Remove deaths and recovered, sort values for confirmed
+    conf_df = sums_per_country.sort_values(by="Confirmed",ascending=False).iloc[:,0:3]
+
+    # Remove entries that have a 0 under Confirmed/Deaths/Recovered
+    conf_df = conf_df[(conf_df.T != 0).all()]
+    
+    # The sunburst plot requires weights (values), labels, and parent (region, or World)
+    # We build the corresponding table here
+    # Inspired and adapted from https://pypi.org/project/world-bank-data/ 
+    columns = ['labels','parents',  'values']
+    # Build the levels 
+    # Level 1 - create copy of original 
+    level1 = conf_df.copy()
+    # Rename columns
+    level1.columns = columns
+    # Add a text column - format values column
+    level1['text'] = level1['values'].apply(lambda pop: '{:,.0f}'.format(pop))
+
+    # Create level 2
+    # Group by continent code
+    level2 = conf_df.groupby('ContinentCode').Confirmed.sum().reset_index()[['ContinentCode', 'ContinentCode', 'Confirmed']]
+    # Rename columns
+    level2.columns = columns
+    level2['parents'] = 'World'
+    # move value to text for this level
+    level2['text'] = level2['values'].apply(lambda pop: '{:,.0f}'.format(pop))
+    level2['values'] = 0
+
+    # Create level 3 - world total as of latest date
+    level3 = pd.DataFrame({'parents': [''], 'labels': ['World'],
+                           'values': [0.0], 'text': ['{:,.0f}'.format(latest["Confirmed"].sum())]})
+
+    # Create master dataframe with all levels
+    all_levels = pd.concat([level1, level2,level3], axis=0,sort=True).reset_index(drop=True)
