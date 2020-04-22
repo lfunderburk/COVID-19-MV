@@ -1,6 +1,10 @@
 # COVID-19-MV
 
-[Try Online Here in the Callysto Hub](https://bit.ly/3agEyQr)
+
+<a href="http://tinyurl.com/uv5ru2y" target="_parent"><img src="https://raw.githubusercontent.com/callysto/curriculum-notebooks/master/open-in-callysto-button.svg?sanitize=true" width="123" height="24" alt="Open in Callysto"/></a> Sunburst plot
+
+<a href="http://tinyurl.com/y77nklfx" target="_parent"><img src="https://raw.githubusercontent.com/callysto/curriculum-notebooks/master/open-in-callysto-button.svg?sanitize=true" width="123" height="24" alt="Open in Callysto"/></a> Logarithmic projection on cumulative cases
+
 
 ![COVID](COVID-19-World.gif)
 
