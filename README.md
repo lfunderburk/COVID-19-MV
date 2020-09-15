@@ -1,8 +1,11 @@
 # COVID-19-MV
 
 
-<a href="http://tinyurl.com/y2mqyc27" target="_parent"><img src="https://raw.githubusercontent.com/callysto/curriculum-notebooks/master/open-in-callysto-button.svg?sanitize=true" width="123" height="24" alt="Open in Callysto"/></a> Press this button to see the latest COVID 19 Case count for different countries in the world.
+<a href="http://tinyurl.com/y2mqyc27" target="_parent"><img src="https://raw.githubusercontent.com/callysto/curriculum-notebooks/master/open-in-callysto-button.svg?sanitize=true" width="123" height="24" alt="Open in Callysto"/></a> 
 
+Press this button above see the latest COVID 19 Case count for different countries in the world.
+
+Note: you will need either a Google or Outlook account to access the material. 
 
 ![COVID](COVID-19-World.gif)
 
