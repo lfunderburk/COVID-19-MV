@@ -1,3 +1,11 @@
+# Author: Laura Gutierrez Funderburk
+# Created on: April 2020
+# Last modified on: Sep 2020
+
+"""
+This script pulls COVID 19 data and creates interactive plots of COVID 19 cases in the world. 
+
+"""
 #!pip install pycountry_convert 
 #!pip install requests 
 #!pip install pandas 
@@ -11,6 +19,7 @@ import plotly.graph_objs as go
 import numpy as np
 from ipywidgets import widgets
 from IPython.display import display, Javascript, Markdown, HTML, clear_output
+from ipywidgets import interact, interact_manual, widgets, Layout, VBox, HBox, Button,fixed,interactive
 
 
 def extract_latest(final_df):
@@ -64,7 +73,9 @@ def generate_levels(df,case_type):
     # move value to text for this level
     level2['text'] = level2['values'].apply(lambda pop: ' ' + str(case_type)+  ' Cases: {:,.0f}'.format(pop))
 
-
+    ## Create level 3 - world total as of latest date
+    level3 = pd.DataFrame({'parents': ['World'], 'labels': ['World'],
+                       'values': [level1.groupby("parents").sum().sum()[0]], 'text':['{:,.0f}'.format(level1.groupby("parents").sum().sum()[0])]})
     #Create master dataframe with all levels
     all_levels = pd.concat([level1,level2], axis=0,sort=True)
 
@@ -141,7 +152,13 @@ def plot_log_function(country,final_df,type_case):
     fig.update_yaxes(showgrid=True)
     fig.show()   
     
-
+def draw_results(b):
+    country = all_the_widgets[0].value
+    
+    clear_output()
+    display(tab)  ## Have to redraw the widgets
+    plot_log_function(country,final_confirmed,"confirmed")
+    plot_log_function(country,final_deaths,"fatal")
 
 if __name__ == "__main__":
 
@@ -224,15 +241,32 @@ if __name__ == "__main__":
 
     style = {'description_width': 'initial'}
 
-    choices = widgets.Combobox(
+    all_the_widgets = [widgets.Combobox(
         # value='John',
-        placeholder='Choose Someone',
+        placeholder='Choose a country',
         options=countries_regions,
-        value='Canada',
         description='Choose a country:',
         ensure_option=True,
         disabled=False,
         style=style
-    )
+    )]
 
+    # Button widget
+    CD_button = widgets.Button(
+        button_style='success',
+        description="Cumulative Case Count", 
+        layout=Layout(width='15%', height='30px'),
+        style=style
+    )
+    
+
+    # Connect widget to function - run subsequent cells
+    CD_button.on_click( draw_results )
+
+    # user menu using categories found above
+    tab3 = VBox(children=[HBox(children=all_the_widgets[0:2]),HBox(children=all_the_widgets[2:5]),
+                          CD_button])
+    tab = widgets.Tab(children=[tab3])
+    tab.set_title(0, 'Choose Parameters')
+    
 
