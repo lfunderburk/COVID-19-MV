@@ -1,9 +1,7 @@
 # COVID-19-MV
 
 
-<a href="http://tinyurl.com/uv5ru2y" target="_parent"><img src="https://raw.githubusercontent.com/callysto/curriculum-notebooks/master/open-in-callysto-button.svg?sanitize=true" width="123" height="24" alt="Open in Callysto"/></a> Sunburst plot
-
-<a href="http://tinyurl.com/y77nklfx" target="_parent"><img src="https://raw.githubusercontent.com/callysto/curriculum-notebooks/master/open-in-callysto-button.svg?sanitize=true" width="123" height="24" alt="Open in Callysto"/></a> Logarithmic projection on cumulative cases
+<a href="http://tinyurl.com/y2mqyc27" target="_parent"><img src="https://raw.githubusercontent.com/callysto/curriculum-notebooks/master/open-in-callysto-button.svg?sanitize=true" width="123" height="24" alt="Open in Callysto"/></a> Press this button to see the latest COVID 19 Case count for different countries in the world.
 
 
 ![COVID](COVID-19-World.gif)
